@@ -1,427 +1,217 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>내 띠·색·AI 프롬프트 생성기</title>
-  <style>
-    :root{
-      --bg:#0b0f14;
-      --card:#0f172a;
-      --line:rgba(255,255,255,.10);
-      --text:#e5e7eb;
-      --muted:#9ca3af;
-      --accent:#22c55e;
-      --btn:#111827;
-      --btn2:#0b1220;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius:18px;
-    }
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR",
-                   "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      background: radial-gradient(1200px 600px at 30% -10%, rgba(34,197,94,.18), transparent 60%),
-                  radial-gradient(800px 500px at 90% 0%, rgba(59,130,246,.18), transparent 55%),
-                  var(--bg);
-      color: var(--text);
-    }
-    .wrap{
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 28px 16px 44px;
-    }
-    .hero{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      margin-bottom:14px;
-    }
-    .kicker{
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      font-size:13px;
-      color: var(--muted);
-    }
-    .dot{
-      width:8px;height:8px;border-radius:999px;background:var(--accent);
-      box-shadow: 0 0 0 4px rgba(34,197,94,.14);
-    }
-    h1{
-      margin:0;
-      font-size:22px;
-      letter-spacing:-0.3px;
-      line-height:1.25;
-    }
-    .sub{
-      margin:0;
-      color: var(--muted);
-      font-size:14px;
-      line-height:1.55;
-    }
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:14px;
-      margin-top: 16px;
-    }
-    @media(min-width:860px){
-      .grid{ grid-template-columns: 1fr 1fr; }
-    }
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 16px;
-    }
-    .label{
-      font-size:13px;
-      color: var(--muted);
-      margin:0 0 10px;
-    }
-    .row{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-    input{
-      flex: 1 1 220px;
-      padding: 12px 12px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      font-size: 15px;
-      outline: none;
-    }
-    input::placeholder{ color: rgba(229,231,235,.45); }
-    button{
-      padding: 12px 14px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      font-size: 14px;
-      cursor: pointer;
-    }
-    button.primary{
-      background: linear-gradient(180deg, rgba(34,197,94,.95), rgba(34,197,94,.72));
-      border-color: rgba(34,197,94,.35);
-      color: #07110a;
-      font-weight: 700;
-    }
-    button:active{ transform: translateY(1px); }
-    .resultTitle{
-      margin:0 0 10px;
-      font-size:18px;
-      letter-spacing:-0.2px;
-      line-height:1.35;
-    }
-    .meta{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      margin-bottom: 10px;
-    }
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      font-size: 13px;
-      color: var(--text);
-    }
-    .swatch{
-      width: 14px; height: 14px;
-      border-radius: 4px;
-      border: 1px solid rgba(0,0,0,.2);
-      display:inline-block;
-      background: #999;
-    }
-    .note{
-      margin: 10px 0 0;
-      font-size: 12px;
-      color: var(--muted);
-      line-height:1.5;
-    }
-    textarea{
-      width:100%;
-      min-height: 160px;
-      resize: vertical;
-      padding: 12px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      font-size: 13px;
-      line-height:1.5;
-      outline:none;
-    }
-    .btnRow{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top: 10px;
-    }
-    .small{
-      font-size:12px;color:var(--muted);margin:10px 0 0;line-height:1.55;
-    }
-    .ok{
-      display:none;
-      margin-left: 8px;
-      font-size: 12px;
-      color: rgba(34,197,94,.95);
-    }
-    .footer{
-      margin-top: 16px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height:1.6;
-    }
-    .link{
-      color: rgba(34,197,94,.95);
-      text-decoration: none;
-      border-bottom: 1px dashed rgba(34,197,94,.45);
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>내 띠 · 색 · AI 프롬프트</title>
+
+<style>
+:root{
+  --bg:#fafafa;
+  --card:#ffffff;
+  --line:#e5e7eb;
+  --text:#111827;
+  --muted:#6b7280;
+  --accent:#2563eb;
+  --radius:16px;
+}
+body{
+  margin:0;
+  background:var(--bg);
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;
+  color:var(--text);
+}
+.wrap{
+  max-width:820px;
+  margin:0 auto;
+  padding:32px 16px 56px;
+}
+header{
+  margin-bottom:24px;
+}
+h1{
+  font-size:22px;
+  margin:0 0 8px;
+  line-height:1.35;
+}
+.sub{
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.6;
+}
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+}
+@media(min-width:860px){
+  .grid{grid-template-columns:1fr 1fr;}
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:16px;
+}
+.label{
+  font-size:13px;
+  color:var(--muted);
+  margin-bottom:8px;
+}
+input{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  font-size:15px;
+}
+button{
+  margin-top:10px;
+  padding:12px;
+  width:100%;
+  border-radius:12px;
+  border:1px solid var(--accent);
+  background:var(--accent);
+  color:#fff;
+  font-size:15px;
+  cursor:pointer;
+}
+.result{
+  margin-top:14px;
+  font-size:15px;
+}
+.pills{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.pill{
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  font-size:13px;
+  background:#f9fafb;
+}
+textarea{
+  width:100%;
+  min-height:160px;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  font-size:13px;
+  line-height:1.5;
+}
+.copy{
+  margin-top:10px;
+  background:#111827;
+  border-color:#111827;
+}
+.note{
+  margin-top:10px;
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.6;
+}
+footer{
+  margin-top:32px;
+  font-size:12px;
+  color:var(--muted);
+  text-align:center;
+}
+</style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="hero">
-      <div class="kicker"><span class="dot"></span> Trendium AI · New Year Special Helper</div>
-      <h1>출생연도만 입력하면, 내 띠·색·AI 프롬프트가 자동 생성됩니다.</h1>
-      <p class="sub">
-        이 도구는 <b>양력 ‘출생연도’</b> 기준으로 띠(12지)와 색(십간/오행)을 계산합니다.
-        결과 프롬프트는 <b>영문</b>으로 제공되어 Midjourney·Firefly·DALL·E 등에 바로 붙여넣을 수 있어요.
-      </p>
-    </div>
+<div class="wrap">
 
-    <div class="grid">
-      <!-- Input / Result -->
-      <div class="card">
-        <p class="label">1) 출생연도를 입력하세요</p>
-        <div class="row">
-          <input id="year" inputmode="numeric" pattern="[0-9]*" placeholder="예: 1993" />
-          <button class="primary" id="btn">확인하기</button>
-        </div>
+<header>
+  <h1>출생연도로 만드는 나만의 상징 동물</h1>
+  <p class="sub">
+    출생연도를 입력하면, 해당 연도의 띠 동물과 색,
+    그리고 AI 이미지 생성을 위한 프롬프트를 알려드립니다.
+  </p>
+</header>
 
-        <div id="res" style="margin-top:14px; display:none;">
-          <p class="resultTitle" id="headline"></p>
+<div class="grid">
 
-          <div class="meta">
-            <span class="pill"><span class="swatch" id="swatch"></span><span id="colorText"></span></span>
-            <span class="pill" id="ganjiText"></span>
-            <span class="pill" id="animalText"></span>
-            <span class="pill" id="elementText"></span>
-          </div>
+  <div class="card">
+    <div class="label">출생연도 입력</div>
+    <input id="year" placeholder="예: 1993" />
+    <button onclick="run()">확인하기</button>
 
-          <p class="note">
-            ※ 1~2월 초 출생자는 ‘설(음력 새해)’ 전후에 따라 띠가 달라질 수 있어요. (본 도구는 양력 연도 기준)
-          </p>
-        </div>
+    <div class="result" id="result"></div>
+    <div class="pills" id="meta"></div>
 
-        <p class="footer">
-          뉴스레터에는 이 링크만 넣어도 충분합니다:
-          <br />
-          <span style="opacity:.9;">👉</span> <span id="siteHint">GitHub Pages 주소</span>
-        </p>
-      </div>
-
-      <!-- Prompt -->
-      <div class="card">
-        <p class="label">2) AI 이미지 프롬프트 (영문) — 복사해서 사용하세요</p>
-        <textarea id="prompt" readonly placeholder="출생연도를 입력하면 프롬프트가 생성됩니다."></textarea>
-
-        <div class="btnRow">
-          <button id="copy">프롬프트 복사</button>
-          <button id="refresh">예시 스타일 변주</button>
-          <span class="ok" id="ok">복사 완료!</span>
-        </div>
-
-        <p class="small">
-          Tip) “style” 라인에 <b>Byzantine mosaic</b>, <b>Bauhaus</b>, <b>Memphis</b>, <b>Art Nouveau</b> 같은 키워드를 교체하면,
-          같은 띠도 전혀 다른 세계관으로 변주할 수 있어요.
-        </p>
-      </div>
-    </div>
-
-    <div class="footer" style="margin-top:18px;">
-      © Trendium AI — create your symbolic animal.  
-      <span style="opacity:.85;">(This is a lightweight educational tool, not fortune-telling.)</span>
+    <div class="note">
+      ※ 양력 연도 기준입니다.<br>
+      ※ 1~2월 초 출생자는 설 기준에 따라 띠가 달라질 수 있어요.
     </div>
   </div>
 
+  <div class="card">
+    <div class="label">AI 이미지 프롬프트 (영문)</div>
+    <textarea id="prompt" readonly></textarea>
+    <button class="copy" onclick="copy()">프롬프트 복사</button>
+  </div>
+
+</div>
+
+<footer>
+  © Trendium AI · New Year Special
+</footer>
+
+</div>
+
 <script>
-(() => {
-  // 1984년 = 갑자 (60갑자 기준점)
-  const BASE_YEAR = 1984;
+function run(){
+  const y = parseInt(document.getElementById("year").value);
+  if(!y){return;}
 
-  // 십간(10)
+  const animals = ["Rat","Ox","Tiger","Rabbit","Dragon","Snake","Horse","Goat","Monkey","Rooster","Dog","Pig"];
+  const animalsKo = ["쥐","소","호랑이","토끼","용","뱀","말","양","원숭이","닭","개","돼지"];
   const stems = ["갑","을","병","정","무","기","경","신","임","계"];
-
-  // 십이지(12) + 동물
-  const branches = [
-    { zhi:"자", animalKo:"쥐", animalEn:"rat" },
-    { zhi:"축", animalKo:"소", animalEn:"ox" },
-    { zhi:"인", animalKo:"호랑이", animalEn:"tiger" },
-    { zhi:"묘", animalKo:"토끼", animalEn:"rabbit" },
-    { zhi:"진", animalKo:"용", animalEn:"dragon" },
-    { zhi:"사", animalKo:"뱀", animalEn:"snake" },
-    { zhi:"오", animalKo:"말", animalEn:"horse" },
-    { zhi:"미", animalKo:"양", animalEn:"goat" },
-    { zhi:"신", animalKo:"원숭이", animalEn:"monkey" },
-    { zhi:"유", animalKo:"닭", animalEn:"rooster" },
-    { zhi:"술", animalKo:"개", animalEn:"dog" },
-    { zhi:"해", animalKo:"돼지", animalEn:"pig" }
-  ];
-
-  // 간(십간) -> 오행/색 매핑 (간은 오행이 2개씩 묶임)
-  const stemMeta = {
-    "갑": { elementKo:"목", colorKo:"푸른", colorEn:"blue",  swatch:"#2f6f3e" },
-    "을": { elementKo:"목", colorKo:"푸른", colorEn:"blue",  swatch:"#2f6f3e" },
-    "병": { elementKo:"화", colorKo:"붉은", colorEn:"red",   swatch:"#c0392b" },
-    "정": { elementKo:"화", colorKo:"붉은", colorEn:"red",   swatch:"#c0392b" },
-    "무": { elementKo:"토", colorKo:"노란", colorEn:"yellow",swatch:"#c9a227" },
-    "기": { elementKo:"토", colorKo:"노란", colorEn:"yellow",swatch:"#c9a227" },
-    "경": { elementKo:"금", colorKo:"흰",  colorEn:"white", swatch:"#e5e7eb" },
-    "신": { elementKo:"금", colorKo:"흰",  colorEn:"white", swatch:"#e5e7eb" },
-    "임": { elementKo:"수", colorKo:"검은", colorEn:"black", swatch:"#111827" },
-    "계": { elementKo:"수", colorKo:"검은", colorEn:"black", swatch:"#111827" }
+  const colors = {
+    "갑":"blue","을":"blue",
+    "병":"red","정":"red",
+    "무":"yellow","기":"yellow",
+    "경":"white","신":"white",
+    "임":"black","계":"black"
+  };
+  const colorKo = {
+    blue:"푸른", red:"붉은", yellow:"노란", white:"흰", black:"검은"
   };
 
-  // 스타일 변주(버튼용) — 우리가 다뤘던 미학 키워드
-  const styleVariants = [
-    "Byzantine mosaic, gold tesserae, sacred icon atmosphere",
-    "Bauhaus minimalism, geometric shapes, clean grid composition",
-    "Memphis design, playful patterns, bold shapes, 80s graphic energy",
-    "Art Nouveau, flowing curves, ornamental botanical lines",
-    "Pop Art, high contrast, screenprint texture, graphic punch",
-    "Pre-Raphaelite, romantic light, fine details, painterly realism",
-    "Art Deco, symmetrical luxury, metallic accents, streamlined forms",
-    "Ikat textile aesthetics, woven texture, rhythmic patterning",
-    "Modern product poster, studio lighting, crisp silhouette, minimal background",
-    "Mythic surrealism, dreamlike ambience, cinematic depth"
-  ];
+  const d = y - 1984;
+  const animal = animals[(d%12+12)%12];
+  const animalKo = animalsKo[(d%12+12)%12];
+  const stem = stems[(d%10+10)%10];
+  const color = colors[stem];
 
-  // DOM
-  const $ = (id) => document.getElementById(id);
-  const yearInput = $("year");
-  const btn = $("btn");
-  const resBox = $("res");
-  const headline = $("headline");
-  const swatch = $("swatch");
-  const colorText = $("colorText");
-  const ganjiText = $("ganjiText");
-  const animalText = $("animalText");
-  const elementText = $("elementText");
-  const promptArea = $("prompt");
-  const copyBtn = $("copy");
-  const refreshBtn = $("refresh");
-  const ok = $("ok");
-  const siteHint = $("siteHint");
+  document.getElementById("result").innerHTML =
+    `<b>${y}년은 ‘${colorKo[color]} ${animalKo}’의 해입니다.</b>`;
 
-  function mod(n, m){ return ((n % m) + m) % m; }
+  document.getElementById("meta").innerHTML = `
+    <span class="pill">띠: ${animalKo}</span>
+    <span class="pill">색: ${colorKo[color]}</span>
+    <span class="pill">간지: ${stem}</span>
+  `;
 
-  function compute(year){
-    const diff = year - BASE_YEAR;
-    const stem = stems[mod(diff, 10)];
-    const branch = branches[mod(diff, 12)];
-    const meta = stemMeta[stem];
-    return { year, stem, branch, meta };
-  }
+  document.getElementById("prompt").value =
+`A symbolic ${animal.toLowerCase()},
+${color} color palette,
+minimal and bright illustration,
+clean background,
+editorial poster style,
+high detail`;
+}
 
-  function buildPrompt({year, stem, branch, meta}, styleLine){
-    // 핵심: 동물 + 색 + 스타일
-    return [
-      `A symbolic ${branch.animalEn} representing the Year of the ${branch.animalEn},`,
-      `${meta.colorEn} color palette,`,
-      `style: ${styleLine},`,
-      `clean background, centered composition, iconic silhouette,`,
-      `high detail, premium poster design, soft grain texture,`,
-      `--no text, watermark, logo`
-    ].join("\n");
-  }
-
-  function render(year){
-    const data = compute(year);
-    const { stem, branch, meta } = data;
-
-    // 예: 2026 = 병오 = 붉은 말
-    headline.textContent = `${year}년은 ‘${meta.colorKo} ${branch.animalKo}’의 해입니다.`;
-
-    swatch.style.background = meta.swatch;
-    // 흰색 스와치는 경계가 안 보일 수 있어 테두리 강화
-    swatch.style.borderColor = meta.colorEn === "white" ? "rgba(0,0,0,.45)" : "rgba(0,0,0,.2)";
-
-    colorText.textContent = `색: ${meta.colorKo}색 (${meta.colorEn})`;
-    ganjiText.textContent = `간지: ${stem}${branch.zhi}`;
-    animalText.textContent = `띠: ${branch.animalKo}띠`;
-    elementText.textContent = `오행: ${meta.elementKo}`;
-
-    resBox.style.display = "block";
-
-    // 기본 스타일은 랜덤 1개
-    const styleLine = styleVariants[Math.floor(Math.random() * styleVariants.length)];
-    promptArea.value = buildPrompt(data, styleLine);
-
-    // “GitHub Pages 주소” 힌트: 현재 페이지 URL 표시
-    siteHint.textContent = location.href;
-  }
-
-  function run(){
-    const raw = (yearInput.value || "").trim();
-    const year = Number(raw);
-
-    if(!raw || !Number.isInteger(year) || year < 1 || year > 9999){
-      resBox.style.display = "none";
-      headline.textContent = "";
-      promptArea.value = "출생연도를 올바르게 입력해 주세요. (예: 1993)";
-      return;
-    }
-    render(year);
-  }
-
-  btn.addEventListener("click", run);
-  yearInput.addEventListener("keydown", (e) => {
-    if(e.key === "Enter") run();
-  });
-
-  refreshBtn.addEventListener("click", () => {
-    const raw = (yearInput.value || "").trim();
-    const year = Number(raw);
-    if(!raw || !Number.isInteger(year)) return;
-
-    const data = compute(year);
-    const styleLine = styleVariants[Math.floor(Math.random() * styleVariants.length)];
-    promptArea.value = buildPrompt(data, styleLine);
-  });
-
-  copyBtn.addEventListener("click", async () => {
-    try{
-      await navigator.clipboard.writeText(promptArea.value);
-      ok.style.display = "inline";
-      setTimeout(() => ok.style.display = "none", 1200);
-    }catch(err){
-      // 일부 브라우저/환경에서 클립보드 권한이 없을 때 fallback
-      promptArea.focus();
-      promptArea.select();
-      document.execCommand("copy");
-      ok.style.display = "inline";
-      setTimeout(() => ok.style.display = "none", 1200);
-    }
-  });
-
-  // 기본 데모 값(원치 않으면 아래 2줄 삭제)
-  // yearInput.value = "2026";
-  // run();
-})();
+function copy(){
+  const t = document.getElementById("prompt");
+  t.select();
+  document.execCommand("copy");
+}
 </script>
+
 </body>
 </html>
