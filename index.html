@@ -13,60 +13,75 @@
   --text:#111827;
   --muted:#6b7280;
   --accent:#2563eb;
+  --accent2:#111827;
+  --chip:#f3f4f6;
   --radius:16px;
 }
+
+*{ box-sizing:border-box; }
+
 body{
   margin:0;
   background:var(--bg);
   font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;
   color:var(--text);
 }
+
 .wrap{
-  max-width:820px;
+  max-width:980px;
   margin:0 auto;
   padding:32px 16px 56px;
 }
-header{
-  margin-bottom:24px;
-}
+
+header{ margin-bottom:22px; }
 h1{
-  font-size:22px;
-  margin:0 0 8px;
-  line-height:1.35;
+  font-size:26px;
+  margin:0 0 10px;
+  line-height:1.3;
+  letter-spacing:-0.2px;
 }
 .sub{
+  margin:0;
   color:var(--muted);
   font-size:14px;
-  line-height:1.6;
+  line-height:1.65;
 }
+
 .grid{
   display:grid;
   grid-template-columns:1fr;
   gap:16px;
+  align-items:stretch; /* keep cards aligned */
 }
-@media(min-width:860px){
-  .grid{grid-template-columns:1fr 1fr;}
+@media(min-width:960px){
+  .grid{ grid-template-columns:1fr 1fr; }
 }
+
 .card{
   background:var(--card);
   border:1px solid var(--line);
   border-radius:var(--radius);
-  padding:16px;
+  padding:18px;
+  overflow:hidden; /* prevents any inner overflow “sticking out” */
 }
+
 .label{
   font-size:13px;
   color:var(--muted);
-  margin-bottom:8px;
+  margin:0 0 10px;
 }
+
 input{
   width:100%;
-  padding:12px;
+  padding:12px 12px;
   border-radius:12px;
   border:1px solid var(--line);
   font-size:15px;
+  outline:none;
+  background:#fff;
 }
+
 button{
-  margin-top:10px;
   padding:12px;
   width:100%;
   border-radius:12px;
@@ -76,6 +91,12 @@ button{
   font-size:15px;
   cursor:pointer;
 }
+
+button.secondary{
+  background:var(--accent2);
+  border-color:var(--accent2);
+}
+
 .result{
   margin-top:14px;
   font-size:15px;
@@ -84,7 +105,7 @@ button{
   display:flex;
   gap:8px;
   flex-wrap:wrap;
-  margin-top:8px;
+  margin-top:10px;
 }
 .pill{
   padding:6px 10px;
@@ -93,28 +114,77 @@ button{
   font-size:13px;
   background:#f9fafb;
 }
+
+.note{
+  margin-top:12px;
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.65;
+}
+
+hr.sep{
+  border:none;
+  border-top:1px solid var(--line);
+  margin:14px 0;
+}
+
+.chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:8px 0 12px;
+}
+.chip{
+  border:1px solid var(--line);
+  background:var(--chip);
+  color:var(--text);
+  font-size:13px;
+  padding:8px 10px;
+  border-radius:999px;
+  cursor:pointer;
+  width:auto;             /* not full width */
+}
+.chip[aria-pressed="true"]{
+  border-color:rgba(37,99,235,.35);
+  background:rgba(37,99,235,.10);
+  color:#1d4ed8;
+  font-weight:600;
+}
+
 textarea{
   width:100%;
-  min-height:160px;
+  height:210px;           /* fixed height = tidy layout */
   padding:12px;
   border-radius:12px;
   border:1px solid var(--line);
   font-size:13px;
-  line-height:1.5;
+  line-height:1.55;
+  outline:none;
+  background:#fff;
+  resize:none;            /* ✅ removes the ugly “resize” handle */
+  overflow:auto;          /* still scrolls inside if long */
 }
-.copy{
+
+.btnRow{
+  display:flex;
+  gap:10px;
   margin-top:10px;
-  background:#111827;
-  border-color:#111827;
+  flex-wrap:wrap;
 }
-.note{
+.btnRow button{
+  flex:1 1 160px;
+  width:auto;
+}
+
+.toast{
+  display:none;
   margin-top:10px;
   font-size:12px;
-  color:var(--muted);
-  line-height:1.6;
+  color:#16a34a;
 }
+
 footer{
-  margin-top:32px;
+  margin-top:28px;
   font-size:12px;
   color:var(--muted);
   text-align:center;
@@ -125,92 +195,196 @@ footer{
 <body>
 <div class="wrap">
 
-<header>
-  <h1>출생연도로 만드는 나만의 상징 동물</h1>
-  <p class="sub">
-    출생연도를 입력하면, 해당 연도의 띠 동물과 색,
-    그리고 AI 이미지 생성을 위한 프롬프트를 알려드립니다.
-  </p>
-</header>
+  <header>
+    <h1>출생연도로 만드는 나만의 상징 동물</h1>
+    <p class="sub">
+      출생연도를 입력하면, 해당 연도의 띠 동물과 색(오행),
+      그리고 <b>AI 이미지 생성을 위한 영문 프롬프트</b>를 자동으로 만들어 드립니다.
+    </p>
+  </header>
 
-<div class="grid">
+  <div class="grid">
+    <!-- LEFT: input/result -->
+    <div class="card">
+      <p class="label">출생연도 입력</p>
+      <input id="year" inputmode="numeric" placeholder="예: 1993" />
+      <div style="margin-top:10px;">
+        <button onclick="run()">확인하기</button>
+      </div>
 
-  <div class="card">
-    <div class="label">출생연도 입력</div>
-    <input id="year" placeholder="예: 1993" />
-    <button onclick="run()">확인하기</button>
+      <div class="result" id="result"></div>
+      <div class="pills" id="meta"></div>
 
-    <div class="result" id="result"></div>
-    <div class="pills" id="meta"></div>
+      <p class="note">
+        ※ 양력 연도 기준입니다.<br>
+        ※ 1~2월 초 출생자는 ‘설(음력 새해)’ 전후에 따라 띠가 달라질 수 있어요.
+      </p>
+    </div>
 
-    <div class="note">
-      ※ 양력 연도 기준입니다.<br>
-      ※ 1~2월 초 출생자는 설 기준에 따라 띠가 달라질 수 있어요.
+    <!-- RIGHT: prompt + styles -->
+    <div class="card">
+      <p class="label">AI 이미지 프롬프트 (영문)</p>
+
+      <div class="label" style="margin-top:2px;">대표 스타일 12가지</div>
+      <div class="chips" id="chips"></div>
+
+      <textarea id="prompt" readonly placeholder="출생연도를 입력하면 프롬프트가 생성됩니다."></textarea>
+
+      <div class="btnRow">
+        <button class="secondary" onclick="copyPrompt()">프롬프트 복사</button>
+        <button onclick="randomStyle()">랜덤 스타일</button>
+      </div>
+      <div class="toast" id="toast">복사 완료!</div>
+
+      <hr class="sep" />
+
+      <p class="note">
+        Tip) 스타일 버튼을 바꾸면 같은 띠도 완전히 다른 미학으로 변주됩니다.
+        (뉴스레터용 링크 페이지로 아주 적합해요)
+      </p>
     </div>
   </div>
 
-  <div class="card">
-    <div class="label">AI 이미지 프롬프트 (영문)</div>
-    <textarea id="prompt" readonly></textarea>
-    <button class="copy" onclick="copy()">프롬프트 복사</button>
-  </div>
-
-</div>
-
-<footer>
-  © Trendium AI · New Year Special
-</footer>
-
+  <footer>© Trendium AI · New Year Special</footer>
 </div>
 
 <script>
+/** ===== Core data ===== **/
+const BASE_YEAR = 1984; // 갑자 기준
+const animalsEn = ["Rat","Ox","Tiger","Rabbit","Dragon","Snake","Horse","Goat","Monkey","Rooster","Dog","Pig"];
+const animalsKo = ["쥐","소","호랑이","토끼","용","뱀","말","양","원숭이","닭","개","돼지"];
+const stems = ["갑","을","병","정","무","기","경","신","임","계"];
+const colors = {
+  "갑":"blue","을":"blue",
+  "병":"red","정":"red",
+  "무":"yellow","기":"yellow",
+  "경":"white","신":"white",
+  "임":"black","계":"black"
+};
+const colorKo = { blue:"푸른", red:"붉은", yellow:"노란", white:"흰", black:"검은" };
+const elementKo = { blue:"목", red:"화", yellow:"토", white:"금", black:"수" };
+
+/** ===== 12 representative styles (buttons) ===== **/
+const STYLE_LIST = [
+  { key:"Bauhaus", label:"Bauhaus", line:"Bauhaus minimalism, geometric shapes, clean grid layout" },
+  { key:"Memphis", label:"Memphis", line:"Memphis design, playful patterns, bold shapes, pop energy" },
+  { key:"ArtNouveau", label:"Art Nouveau", line:"Art Nouveau, flowing curves, ornamental botanical lines" },
+  { key:"Byzantine", label:"Byzantine mosaic", line:"Byzantine mosaic, gold tesserae, sacred icon atmosphere" },
+  { key:"Ukiyoe", label:"Ukiyo-e", line:"Japanese Ukiyo-e, woodblock print texture, flat color planes" },
+  { key:"PopArt", label:"Pop Art", line:"Pop Art, high contrast, screenprint texture, graphic punch" },
+  { key:"PreRaphaelite", label:"Pre-Raphaelite", line:"Pre-Raphaelite, romantic light, painterly realism, fine details" },
+  { key:"ArtDeco", label:"Art Deco", line:"Art Deco, symmetrical luxury, streamlined silhouette, metallic accents" },
+  { key:"DieterRams", label:"Dieter Rams", line:"ultra minimal product design, Dieter Rams principles, calm clarity" },
+  { key:"Hundertwasser", label:"Hundertwasser", line:"Hundertwasser, organic spirals, joyful irregular geometry, vivid texture" },
+  { key:"Escher", label:"M.C. Escher", line:"M.C. Escher, tessellation illusion, precise linework, surreal geometry" },
+  { key:"Arcimboldo", label:"Arcimboldo", line:"Arcimboldo-inspired, animal formed from objects, playful assemblage realism" }
+];
+
+let currentStyle = STYLE_LIST[0]; // default
+
+/** ===== Helpers ===== **/
+function mod(n,m){ return ((n % m) + m) % m; }
+
+function compute(year){
+  const d = year - BASE_YEAR;
+  const idx12 = mod(d,12);
+  const idx10 = mod(d,10);
+  const animal = animalsEn[idx12];
+  const animalK = animalsKo[idx12];
+  const stem = stems[idx10];
+  const color = colors[stem];
+  return { year, animal, animalK, stem, color };
+}
+
+function buildPrompt({animal, color}, styleLine){
+  return [
+    `A symbolic ${animal.toLowerCase()} (zodiac animal motif),`,
+    `${color} color palette,`,
+    `style: ${styleLine},`,
+    `bright minimal illustration, clean background, centered composition,`,
+    `editorial poster design, high detail, subtle grain texture,`,
+    `--no text, watermark, logo`
+  ].join("\n");
+}
+
+/** ===== UI render ===== **/
+function renderChips(){
+  const wrap = document.getElementById("chips");
+  wrap.innerHTML = "";
+  STYLE_LIST.forEach(s => {
+    const b = document.createElement("button");
+    b.className = "chip";
+    b.type = "button";
+    b.textContent = s.label;
+    b.setAttribute("aria-pressed", String(s.key === currentStyle.key));
+    b.addEventListener("click", () => {
+      currentStyle = s;
+      // update pressed state
+      [...wrap.children].forEach(ch => ch.setAttribute("aria-pressed","false"));
+      b.setAttribute("aria-pressed","true");
+      // rebuild prompt if year already entered
+      const y = parseInt(document.getElementById("year").value);
+      if(Number.isInteger(y)) applyPrompt(y);
+    });
+    wrap.appendChild(b);
+  });
+}
+
+function applyPrompt(year){
+  const data = compute(year);
+  document.getElementById("prompt").value = buildPrompt(data, currentStyle.line);
+}
+
 function run(){
   const y = parseInt(document.getElementById("year").value);
-  if(!y){return;}
-
-  const animals = ["Rat","Ox","Tiger","Rabbit","Dragon","Snake","Horse","Goat","Monkey","Rooster","Dog","Pig"];
-  const animalsKo = ["쥐","소","호랑이","토끼","용","뱀","말","양","원숭이","닭","개","돼지"];
-  const stems = ["갑","을","병","정","무","기","경","신","임","계"];
-  const colors = {
-    "갑":"blue","을":"blue",
-    "병":"red","정":"red",
-    "무":"yellow","기":"yellow",
-    "경":"white","신":"white",
-    "임":"black","계":"black"
-  };
-  const colorKo = {
-    blue:"푸른", red:"붉은", yellow:"노란", white:"흰", black:"검은"
-  };
-
-  const d = y - 1984;
-  const animal = animals[(d%12+12)%12];
-  const animalKo = animalsKo[(d%12+12)%12];
-  const stem = stems[(d%10+10)%10];
-  const color = colors[stem];
+  if(!Number.isInteger(y)){
+    document.getElementById("result").innerHTML = "<span style='color:#ef4444'>출생연도를 숫자로 입력해 주세요.</span>";
+    document.getElementById("meta").innerHTML = "";
+    return;
+  }
+  const d = compute(y);
 
   document.getElementById("result").innerHTML =
-    `<b>${y}년은 ‘${colorKo[color]} ${animalKo}’의 해입니다.</b>`;
+    `<b>${y}년은 ‘${colorKo[d.color]} ${d.animalK}’의 해입니다.</b>`;
 
   document.getElementById("meta").innerHTML = `
-    <span class="pill">띠: ${animalKo}</span>
-    <span class="pill">색: ${colorKo[color]}</span>
-    <span class="pill">간지: ${stem}</span>
+    <span class="pill">띠: ${d.animalK}</span>
+    <span class="pill">색: ${colorKo[d.color]} (${d.color})</span>
+    <span class="pill">오행: ${elementKo[d.color]}</span>
+    <span class="pill">간지: ${d.stem}</span>
   `;
 
-  document.getElementById("prompt").value =
-`A symbolic ${animal.toLowerCase()},
-${color} color palette,
-minimal and bright illustration,
-clean background,
-editorial poster style,
-high detail`;
+  applyPrompt(y);
 }
 
-function copy(){
-  const t = document.getElementById("prompt");
-  t.select();
-  document.execCommand("copy");
+function randomStyle(){
+  const i = Math.floor(Math.random() * STYLE_LIST.length);
+  currentStyle = STYLE_LIST[i];
+  renderChips();
+  const y = parseInt(document.getElementById("year").value);
+  if(Number.isInteger(y)) applyPrompt(y);
 }
+
+async function copyPrompt(){
+  const t = document.getElementById("prompt").value || "";
+  if(!t.trim()) return;
+
+  try{
+    await navigator.clipboard.writeText(t);
+  }catch(e){
+    // fallback
+    const ta = document.getElementById("prompt");
+    ta.focus(); ta.select();
+    document.execCommand("copy");
+  }
+
+  const toast = document.getElementById("toast");
+  toast.style.display = "block";
+  setTimeout(()=> toast.style.display="none", 1100);
+}
+
+/** init */
+renderChips();
 </script>
 
 </body>
